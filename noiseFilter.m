@@ -25,46 +25,38 @@ switch var
         type = 'blue';
 end
 Noise = generateNoise(length(musicBlock),type,1);
+
 %% Create audio block (1ms)
+%while(run)
 %while (~isempty(musicBlock))
-  % get blocks
-    recordblocking(ambientRec, .1);
-  % turn to data
+  % get ambient blocks
+    recordblocking(ambientRec,duration);
     ambientBlock = getaudiodata(ambientRec)';
-  % check isempty
-    
-  % create noise
-    Noise = generateNoise(length(musicBlock),'pink',1);
-    Noise = step(Noise);
-  % preNoise
+ 
+  % preNoise: ambinet noise mixed with noise
     preNoise = ambientBlock + Noise;
+    
   % preSignal
     preSignal = preNoise + musicBlock;
+    
   % postNoise
-    [postNoise] = wiener2(preNoise,[1,44100]);
-    post
-  % postSignal
-    postSignal = preSignal - postNoise;
-    
-% Test plots
+    postNoise = wiener(preNoise,musicBlock);    
 
-  % inputs
-    figure 
-    subplot(2,1,1)
-    plot(ambientBlock)
-    title('ambient noise')
-    subplot(2,1,2)
-    plot(musicBlock)
-    title('music block')
+  % postSignal
+    postSignal = preSignal - (preNoise + postNoise);
     
-  % noise  
-    figure
-    subplot(2,1,1)
-    plot(preNoise)
-    title('pre noise')
-    subplot(2,1,2)
-    plot(postNoise)
-    title('post noise')
+  % playback
+    soundsc(postSignal, Fs);
+    
+  % create new block
+    recordblocking(musicRec,duration);
+    musicBlock = getaudiodata(musicRec)';
+    
+  % if zero, loop will execute once
+    run = 0;
+    
+%end
+%end   
 %%    
   % signals
     figure
