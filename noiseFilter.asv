@@ -5,7 +5,6 @@ Fs = 44100; %Sample Rate
 timeStep = 0.001; %Window Time step
 blockSize = round(Fs * timeStep); %Blocksize
 SNR = 1;
-duration = 3;
 %% Create music input using audiorecorder
 [music,Fs] = audioread('po35.wav'); %temporary music file load
 plot(music) %plot waveform
@@ -18,7 +17,7 @@ recordblocking(musicRec,.1);
 musicBlock = getaudiodata(musicRec)';
 
 %% Create audio block (1ms)
-%while (~isempty(musicBlock))
+while (~isempty(musicBlock))
   % get blocks
     recordblocking(ambientRec, .1);
   % turn to data
@@ -68,21 +67,15 @@ musicBlock = getaudiodata(musicRec)';
     title('postSignal')
     
 %% 
-  % post-filter Noise vs. original Audio
-      figure
-      subplot(2,1,1)
-      plot(musicBlock)
-      title('post-filter Noise')
-      subplot(2,1,2)
-      plot(postSignal)
-      title('original Audio')
+  % post-filter Noise vs. 
+    
 %%    
-    % playback
-      soundsc(postSignal, Fs);
-    % create new block
-      recordblocking(musicRec,.1);
-      musicBlock = getaudiodata(musicRec)';
-%end
+  % playback
+    soundsc(postSignal, Fs);
+  % create new block
+    recordblocking(musicRec,.1);
+    musicBlock = getaudiodata(musicRec)';
+end
 
 %% Error Estimation
 
@@ -90,11 +83,3 @@ e = xcorr(postNoise,musicBlock);
 Error = abs(sum(e))^2 / 100;
 plot(e);
 
-
-%% Adjustments
-%
-%  change SNR for Noise Generation
-%
-%  change Noise Type 
-%
-%  
