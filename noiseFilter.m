@@ -77,3 +77,6 @@ end
 %% Error Estimation
 
 e = xcorr(postNoise,musicBlock);
+Error = abs(sum(e))^2 / 100;
+plot(e);
+
