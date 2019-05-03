@@ -1,22 +1,30 @@
-%% Audio Device
-info = audiodevinfo; % Struct that contains internal audio device info and ID
+%% Adaptive Noise Filter
 %% Init
 Fs = 44100; %Sample Rate
 timeStep = 0.001; %Window Time step
 blockSize = round(Fs * timeStep); %Blocksize
-SNR = 1;
-duration = 3;
-%% Create music input using audiorecorder
-[music,Fs] = audioread('po35.wav'); %temporary music file load
-plot(music) %plot waveform
+SNR = .1;
+duration = 5;
+
 %% Create recording objects
 ambientRec = audiorecorder(44100,16,1,0); % Records Noise from Internal microphone
-musicRec = audiorecorder(44100,16,1,0); % Records muisc from AudioInterface
+musicRec = audiorecorder(44100,16,1,2); % Records muisc from AudioInterface
 
-
-recordblocking(musicRec,.1);
+%% Create first audio block
+recordblocking(musicRec,duration);
 musicBlock = getaudiodata(musicRec)';
 
+%% Create Additive Noise
+var = 2;
+switch var
+    case 1
+        type = 'white';
+    case 2
+        type = 'pink';
+    case 3
+        type = 'blue';
+end
+Noise = generateNoise(length(musicBlock),type,1);
 %% Create audio block (1ms)
 %while (~isempty(musicBlock))
   % get blocks
