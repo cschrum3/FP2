@@ -73,3 +73,7 @@ while (~isempty(musicBlock))
     recordblocking(musicRec,.1);
     musicBlock = getaudiodata(musicRec)';
 end
+
+%% Error Estimation
+
+e = xcorr(postNoise,musicBlock);
